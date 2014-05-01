@@ -105,13 +105,14 @@ BEGIN
    stim_proc: process
    begin
      wait for clk_period;
-	  instr <= 
+	  --0, 0, 
+	  instr <= "00000000000000000000000000000000";
 	  wait for clk_period;
-	  instr <= 
+	  instr <= "00000000000000000000000000000000";
 	  wait for clk_period;
-	  instr <= 
+	  instr <= "00000000000000000000000000000000";
 	  wait for clk_period;
-	  instr <= 
+	  instr <= "00000000000000000000000000000000";
 	  wait for clk_period;
 
       wait;
