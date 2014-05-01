@@ -1,12 +1,13 @@
 ECE281_CE5
 ==========
+
 MIPS Programming
 
-##Part 1
+###Part 1
 
 Load 44 into $s0, -37 into $s1. Store the sum in $s2. Store $s2 in  memory x54.
 
-  ###MIPS Code
+  ####MIPS Code
   
   addi $s0, $0, 44
   
