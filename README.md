@@ -7,7 +7,7 @@ MIPS Programming
 
 Load 44 into $s0, -37 into $s1. Store the sum in $s2. Store $s2 in  memory x54.
 
-  ####MIPS Code
+_MIPS Code_
   
   addi $s0, $0, 44
   
