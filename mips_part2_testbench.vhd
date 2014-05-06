@@ -97,7 +97,7 @@ BEGIN
 --MIPS Code
 --	addi $s0, $0, 44
 --	addi $s1, $0, -37
---	addi $s2, $s0, $s1
+--	add $s2, $s0, $s1
 --	sw $s2, 0x54($0)
 ------------------------------------------------------
 
@@ -110,7 +110,7 @@ BEGIN
 	  wait for clk_period;
 	  instr <= "0010000000010001111111111011100";
 	  wait for clk_period;
-	  instr <= "00000000000000000000000000000000";
+	  instr <= "00000010000100011001000000100000";
 	  wait for clk_period;
 	  instr <= "00000000000000000000000000000000";
 	  wait for clk_period;
