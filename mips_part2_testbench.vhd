@@ -104,8 +104,8 @@ BEGIN
    -- Stimulus process
    stim_proc: process
    begin
+	reset <= '0';
      wait for clk_period;
-	  --0, 0, 
 	  instr <= "00100000000100000000000000101100";
 	  wait for clk_period;
 	  instr <= "00100000000100011111111111011100";
