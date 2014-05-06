@@ -106,9 +106,9 @@ BEGIN
    begin
      wait for clk_period;
 	  --0, 0, 
-	  instr <= "00000000000000000000000000000000";
+	  instr <= "00100000000100000000000000101100";
 	  wait for clk_period;
-	  instr <= "00000000000000000000000000000000";
+	  instr <= "0010000000010001111111111011100";
 	  wait for clk_period;
 	  instr <= "00000000000000000000000000000000";
 	  wait for clk_period;
