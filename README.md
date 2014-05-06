@@ -10,7 +10,7 @@ Load 44 into $s0, -37 into $s1. Store the sum in $s2. Store $s2 in  memory x54.
 |MIPS Code | Machine Code | Hex translation|
 -----------|--------------|----------------
 addi $s0, $0, 44 | 00100000000100000000000000101100 | 0x2010002C
-addi $s1, $0, -37 | |
+addi $s1, $0, -37 | 0010000000010001111111111011100 | 0x2011FFDC
 addi $s2, $s0, $s1 | |
 sw $s2, 0x54($0) | |
 
