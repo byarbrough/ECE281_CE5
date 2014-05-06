@@ -8,7 +8,7 @@
 -- Project Name:  CE5_Yarbrough
 -- Target Device:  
 -- Tool versions:  
--- Description:   Machine code for the firsr part of MIPS CE_5
+-- Description:   Machine code for the firsr part of MIPS CE_5: add two values and store the result
 -- 
 -- VHDL Test Bench Created by ISE for module: mips
 -- 
@@ -108,7 +108,7 @@ BEGIN
      wait for clk_period;
 	  instr <= "00100000000100000000000000101100";
 	  wait for clk_period;
-	  instr <= "00100000000100011111111111011100";
+	  instr <= "00100000000100011111111111011011";
 	  wait for clk_period;
 	  instr <= "00000010000100011001000000100000";
 	  wait for clk_period;
