@@ -194,6 +194,8 @@ begin
       when "000100" => controls <= "000100001"; -- BEQ
       when "001000" => controls <= "101000000"; -- ADDI
       when "000010" => controls <= "000000100"; -- J
+		--insert ori
+		when "001101" => controls <= "101000000"; --ori
       when others   => controls <= "---------"; -- illegal op
     end case;
   end process;
