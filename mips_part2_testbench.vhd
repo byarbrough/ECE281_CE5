@@ -106,12 +106,18 @@ BEGIN
    begin
 	reset <= '0';
      wait for clk_period;
+	  --	addi $s0, $0, 44
 	  instr <= "00100000000100000000000000101100";
 	  wait for clk_period;
+	  --	addi $s1, $0, -37
 	  instr <= "00100000000100011111111111011011";
-	  wait for clk_period;
+	  --	add $s2, $s0, $s1
 	  instr <= "00000010000100011001000000100000";
 	  wait for clk_period;
+	  -- ori $S3, $S2, x8000
+	  instr <= "00110110010100111000000000000000";
+	  wait for clk_period;
+	  --	sw $s2, 0x54($0)
 	  instr <= "10101100000100100000000001010100";
 	  wait for clk_period;
 
