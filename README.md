@@ -28,3 +28,17 @@ The four instructions only take a few clock cycles to complete; here is a closer
 The correct results were stored in the memory signals. The program executed correctly and the final result, 7, was stored in memory.
 
 ![alt text](https://github.com/byarbrough/ECE281_CE5/blob/master/sim_2_memResults.PNG?raw=true "Part 2 Simulation Results")
+
+
+###Part 3
+
+This task was to modify the MIPS schematic and VHDL files to allow for ori (Or immediate) so that the commmand _ori $S3, $S2, x8000_ could be executed. Looking at the schematic, I couldn't find a reason why the ALU, which already does Or, couldn't just go for it; everything was wired for addi, how different could ori be?
+
+|MIPS Code | Machine Code | Hex translation|
+-----------|--------------|----------------
+ori $S3, $S2, x8000 | 00110110010100111000000000000000 | 0x36538000
+
+Well, as it turns out, it's a lot different.
+![alt text](https://github.com/byarbrough/ECE281_CE5/blob/master/firstOri_sim.PNG?raw=true "ori flunk")
+
+This came complete with "XXXX" to mem(18) which is $s0, where the ori was supposed to be stored. So what went wrong?
