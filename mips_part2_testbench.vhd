@@ -111,6 +111,7 @@ BEGIN
 	  wait for clk_period;
 	  --	addi $s1, $0, -37
 	  instr <= "00100000000100011111111111011011";
+	  wait for clk_period;
 	  --	add $s2, $s0, $s1
 	  instr <= "00000010000100011001000000100000";
 	  wait for clk_period;

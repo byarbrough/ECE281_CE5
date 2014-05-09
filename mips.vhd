@@ -199,7 +199,7 @@ begin
       when "001000" => controls <= "1010000000"; -- ADDI
       when "000010" => controls <= "0000001000"; -- J
 		--insert ori
-		when "001101" => controls <= "1010000001"; --ori
+		when "001101" => controls <= "1010000101"; --ori
       when others   => controls <= "----------"; -- illegal op
     end case;
   end process;
@@ -220,6 +220,7 @@ begin
     case aluop is
       when "000" => alucontrol <= "010"; -- add (for lb/sb/addi)
       when "001" => alucontrol <= "110"; -- sub (for beq)
+		when "101" => alucontrol <= "001"; --ori
       when others => case funct is         -- R-type instructions
                          when "100000" => alucontrol <= "010"; -- add (for add)
                          when "100010" => alucontrol <= "110"; -- subtract (for sub)
@@ -274,7 +275,8 @@ architecture struct of datapath is
 	signal pcjump, pcnext, pcnextbr, pcplus4, pcbranch: STD_LOGIC_VECTOR(31 downto 0);
 	signal signimm, signimmsh: STD_LOGIC_VECTOR(31 downto 0);
 	signal srca, srcb, result: STD_LOGIC_VECTOR(31 downto 0);
-	signal intoALU: STD_LOGIC_VECTOR(31 downto 0);
+	--part 3
+	signal intoMux: STD_LOGIC_VECTOR(31 downto 0);
 	signal extendOr: STD_LOGIC_VECTOR(31 downto 0);
 begin
 	extendOr <= "0000000000000000" & instr(15 downto 0);
@@ -297,11 +299,11 @@ begin
   se: signext port map(instr(15 downto 0), signimm);
 
   -- ALU logic
-  srcbmux: mux2 generic map(32) port map(writedata, signimm, alusrc, srcb);
+  srcbmux: mux2 generic map(32) port map(writedata, intoMux, alusrc, srcb);
   mainalu:  alu port map(srca, srcb, alucontrol, aluout, zero);
   
   ------------part 3 logic
-  orimux: mux2 generic map(32) port map( SignImm, extendOr, alucontrol(0), intoALU);
+  orimux: mux2 generic map(32) port map(SignImm, extendOr, alucontrol(0), intoMux);
   
 end;
 
