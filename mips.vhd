@@ -37,13 +37,13 @@ entity maindec is -- main control decoder
        branch, alusrc:     out STD_LOGIC;
        regdst, regwrite:   out STD_LOGIC;
        jump:               out STD_LOGIC;
-       aluop:              out  STD_LOGIC_VECTOR(1 downto 0));
+       aluop:              out  STD_LOGIC_VECTOR(2 downto 0));
 end;
 
 library IEEE; use IEEE.STD_LOGIC_1164.all;
 entity aludec is -- ALU control decoder
   port(funct:      in  STD_LOGIC_VECTOR(5 downto 0);
-       aluop:      in  STD_LOGIC_VECTOR(1 downto 0);
+       aluop:      in  STD_LOGIC_VECTOR(2 downto 0);
        alucontrol: out STD_LOGIC_VECTOR(2 downto 0));
 end;
 
@@ -150,6 +150,9 @@ architecture struct of mips is
   signal memtoreg, alusrc, regdst, regwrite, jump, pcsrc: STD_LOGIC;
   signal zero: STD_LOGIC;
   signal alucontrol: STD_LOGIC_VECTOR(2 downto 0);
+  
+  -- signal for part 3
+  
 begin
   cont: controller port map(instr(31 downto 26), instr(5 downto 0),
                             zero, memtoreg, memwrite, pcsrc, alusrc,
@@ -166,15 +169,16 @@ architecture struct of controller is
          branch, alusrc:     out STD_LOGIC;
          regdst, regwrite:   out STD_LOGIC;
          jump:               out STD_LOGIC;
-         aluop:              out  STD_LOGIC_VECTOR(1 downto 0));
+         aluop:              out  STD_LOGIC_VECTOR(2 downto 0));
   end component;
   component aludec
     port(funct:      in  STD_LOGIC_VECTOR(5 downto 0);
-         aluop:      in  STD_LOGIC_VECTOR(1 downto 0);
+         aluop:      in  STD_LOGIC_VECTOR(2 downto 0);
          alucontrol: out STD_LOGIC_VECTOR(2 downto 0));
   end component;
-  signal aluop: STD_LOGIC_VECTOR(1 downto 0);
+  signal aluop: STD_LOGIC_VECTOR(2 downto 0);
   signal branch: STD_LOGIC;
+
 begin
   md: maindec port map(op, memtoreg, memwrite, branch,
                        alusrc, regdst, regwrite, jump, aluop);
@@ -184,38 +188,38 @@ begin
 end;
 
 architecture behave of maindec is
-  signal controls: STD_LOGIC_VECTOR(8 downto 0);
+  signal controls: STD_LOGIC_VECTOR(9 downto 0);
 begin
   process(op) begin
     case op is
-      when "000000" => controls <= "110000010"; -- Rtype
-      when "100011" => controls <= "101001000"; -- LW
-      when "101011" => controls <= "001010000"; -- SW
-      when "000100" => controls <= "000100001"; -- BEQ
-      when "001000" => controls <= "101000000"; -- ADDI
-      when "000010" => controls <= "000000100"; -- J
+      when "000000" => controls <= "1100000010"; -- Rtype
+      when "100011" => controls <= "1010010000"; -- LW
+      when "101011" => controls <= "0010100000"; -- SW
+      when "000100" => controls <= "0001000001"; -- BEQ
+      when "001000" => controls <= "1010000000"; -- ADDI
+      when "000010" => controls <= "0000001000"; -- J
 		--insert ori
-		when "001101" => controls <= "101000000"; --ori
-      when others   => controls <= "---------"; -- illegal op
+		when "001101" => controls <= "1010000001"; --ori
+      when others   => controls <= "----------"; -- illegal op
     end case;
   end process;
 
-  regwrite <= controls(8);
-  regdst   <= controls(7);
-  alusrc   <= controls(6);
-  branch   <= controls(5);
-  memwrite <= controls(4);
-  memtoreg <= controls(3);
-  jump     <= controls(2);
-  aluop    <= controls(1 downto 0);
+  regwrite <= controls(9);
+  regdst   <= controls(8);
+  alusrc   <= controls(7);
+  branch   <= controls(6);
+  memwrite <= controls(5);
+  memtoreg <= controls(4);
+  jump     <= controls(3);
+  aluop    <= controls(2 downto 0);
 end;
 
 architecture behave of aludec is
 begin
   process(aluop, funct) begin
     case aluop is
-      when "00" => alucontrol <= "010"; -- add (for lb/sb/addi)
-      when "01" => alucontrol <= "110"; -- sub (for beq)
+      when "000" => alucontrol <= "010"; -- add (for lb/sb/addi)
+      when "001" => alucontrol <= "110"; -- sub (for beq)
       when others => case funct is         -- R-type instructions
                          when "100000" => alucontrol <= "010"; -- add (for add)
                          when "100010" => alucontrol <= "110"; -- subtract (for sub)
@@ -229,6 +233,7 @@ begin
 end;
 
 architecture struct of datapath is
+
   component alu
     port(a, b:       in  STD_LOGIC_VECTOR(31 downto 0);
          alucontrol: in  STD_LOGIC_VECTOR(2 downto 0);
@@ -264,11 +269,16 @@ architecture struct of datapath is
          s:      in  STD_LOGIC;
          y:      out STD_LOGIC_VECTOR(width-1 downto 0));
   end component;
-  signal writereg: STD_LOGIC_VECTOR(4 downto 0);
-  signal pcjump, pcnext, pcnextbr, pcplus4, pcbranch: STD_LOGIC_VECTOR(31 downto 0);
-  signal signimm, signimmsh: STD_LOGIC_VECTOR(31 downto 0);
-  signal srca, srcb, result: STD_LOGIC_VECTOR(31 downto 0);
+  
+	signal writereg: STD_LOGIC_VECTOR(4 downto 0);
+	signal pcjump, pcnext, pcnextbr, pcplus4, pcbranch: STD_LOGIC_VECTOR(31 downto 0);
+	signal signimm, signimmsh: STD_LOGIC_VECTOR(31 downto 0);
+	signal srca, srcb, result: STD_LOGIC_VECTOR(31 downto 0);
+	signal intoALU: STD_LOGIC_VECTOR(31 downto 0);
+	signal extendOr: STD_LOGIC_VECTOR(31 downto 0);
 begin
+	extendOr <= "0000000000000000" & instr(15 downto 0);
+
   -- next PC logic
   pcjump <= pcplus4(31 downto 28) & instr(25 downto 0) & "00";
   pcreg: flopr generic map(32) port map(clk, reset, pcnext, pc);
@@ -289,6 +299,10 @@ begin
   -- ALU logic
   srcbmux: mux2 generic map(32) port map(writedata, signimm, alusrc, srcb);
   mainalu:  alu port map(srca, srcb, alucontrol, aluout, zero);
+  
+  ------------part 3 logic
+  orimux: mux2 generic map(32) port map( SignImm, extendOr, alucontrol(0), intoALU);
+  
 end;
 
 architecture behave of alu is
