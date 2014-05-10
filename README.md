@@ -47,6 +47,7 @@ Well, first and foremost, the gray "-----" is because the VHDL file had that in 
 change, I simply had to add another state.
 The XXX's gave me a little more trouble. I continued to debug, working with the Lesson 39 slides, to get the ori implemented. I knew that I had to use part of the immediate signal to or with a 32 bit signal, so I had to concatenate 16 zeros. Then I needed another mux to determine which of the signals to send into the ALU. Informal discussion with classmates lead to these general ideas. The implementation of these changes can be seen in the schematic below.
 
+![alt text](https://github.com/byarbrough/ECE281_CE5/blob/master/schmatic_MIPS.PNG?raw=true "MIPS Schmatic, modified")
 
 Dr. Neebel eventually pointed out that my testbench file was missing a wait for clock period... this dumb error accounted for the XXXs in the instruction signal.
 
